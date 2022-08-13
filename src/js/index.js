@@ -26,35 +26,15 @@ function App() {
     $('.menu-count').innerHTML = `총 ${menuCount}개`;
   }
 
-  $('.menu-list-item').addEventListener('click', (e) => {
-    if (e.target.classList.contains('menu-edit-button')) {
-      const $menuName = e.target.closest('li').querySelector('.menu-name');
-      const updatedMenuName = prompt('메뉴명을 수정하세요', menuName.innerText);
-      $menuName.innerText = updatedMenuName;
-    } 
-    if(e.target.classList.contains('menu-remove-button')) {
-      if(confirm('정말 삭제하시겠습니까?')) {
-        e.target.closest('li').remove();
-        updateMenuCount();
-      }
-    }
-  });
-
-  $('.menu-form').addEventListener("submit", (e) => {
-    e.preventDefault();
-  })
-
-
-
   const addMenuName = () => {
-     if ($('.input-field').value === '') {
+    if ($('.input-field').value === '') {
       alert('값을 입력해주세요.');
       return;
     }
-          const espressoMenuName = $('.input-field').value;
-          const menuItemTemplate = (espressoMenuName) => {
-            return;
-            `<li class="menu-list-item d-flex items-center py-2">
+    const espressoMenuName = $('.input-field').value;
+    const menuItemTemplate = (espressoMenuName) => {
+      return;
+      `<li class="menu-list-item d-flex items-center py-2">
               <span class="w-100 pl-2 menu-name">${espressoMenuName}</span>
               <button
               type="button"
@@ -69,17 +49,41 @@ function App() {
               삭제
               </button>
               </li>`;
-          };
-          $('.menu-list').insertAdjacentHTML(
-            'beforeEnd',
-            menuItemTemplate(espressoMenuName)
-          );
-            updateMenuCount()
-          $('.input-filed').value = '';
-    
-        }
+    };
+    $('.menu-list').insertAdjacentHTML(
+      'beforeEnd',
+      menuItemTemplate(espressoMenuName)
+    );
+    updateMenuCount();
+    $('.input-filed').value = '';
+  };
 
+  const updateMenuName = (e) => {
+    const $menuName = e.target.closest('li').querySelector('.menu-name');
+    const updatedMenuName = prompt('메뉴명을 수정하세요', menuName.innerText);
+    $menuName.innerText = updatedMenuName;
   }
+
+
+  const removeMenuName = (e) => {
+    if (confirm('정말 삭제하시겠습니까?')) {
+      e.target.closest('li').remove();
+      updateMenuCount();
+    }
+  }
+
+  $('.menu-list-item').addEventListener('click', (e) => {
+    if (e.target.classList.contains('menu-edit-button')) {
+      updateMenuName(e)
+    } 
+    if(e.target.classList.contains('menu-remove-button')) {
+      removeMenuName(e)
+    }
+  })
+
+  $('.menu-form').addEventListener("submit", (e) => {
+    e.preventDefault();
+  })
 
   $('.input-field').addEventListener("keypress",(e) => {
     if (e.key !== 'Enter') {
@@ -88,8 +92,6 @@ function App() {
     addMenuName()
   })
 
-  $('.input-submit').addEventListener('click', () => {
-    addMenuName()
-  })
-
+  $('.input-submit').addEventListener('click', addMenuName);
+}
 App();
