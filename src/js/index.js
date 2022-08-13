@@ -21,9 +21,19 @@ const $ = (selector) => document.querySelector(selector);
 
 
 function App() {
+  $('.menu-list-item').addEventListener('click', (e) => {
+    if (e.target.classList.contains('menu-edit-button')) {
+      const $menuName = e.target.closest('li').querySelector('.menu-name');
+      const updatedMenuName = prompt('메뉴명을 수정하세요', menuName.innerText);
+      $menuName.innerText = updatedMenuName;
+    }
+  });
+
   $('.menu-form').addEventListener("submit", (e) => {
     e.preventDefault();
   })
+
+
 
   const addMenuName = () => {
      if ($('.input-field').value === '') {
