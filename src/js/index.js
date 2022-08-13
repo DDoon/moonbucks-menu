@@ -23,6 +23,15 @@
 
 const $ = (selector) => document.querySelector(selector);
 
+const store = {
+  setLocalStorage(menu) {
+    localStorage.setItem('menu', JSON.stringify(menu));
+  },
+  getLocalStorage() {
+    localStorage.getItem('menu');
+  },
+};
+
 function App() {
   const updateMenuCount= () => {
     const menuCount = $('.menu-list').querySelectorAll('li').length;
