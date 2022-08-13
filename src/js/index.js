@@ -16,20 +16,37 @@
 // - [] 확인 버튼을 클릭하면 메뉴가 삭제된다.
 // - [] 총 메뉴 갯수를 count하여 상단에 보여준다.
 
+const $ = (selector) => document.querySelector(selector);
+
 // 자바스크립트를 불러왔을 때 실행이 되어야함
-function APP() {
-  // 메뉴의 이름을 입력받는 곳 -> HTML에서 input에서 입력받고 있음 
-  // 엘리먼트를 찾는 메서드 id에는 #이 붙음 사용자가 키보드 입력한 값을 받는 경우 keypress
-  // keypress로 이벤트를 입력받아 
-  // e는 event의 약자
-  document.querySelector('.menu-form').addEventListener("submit", (e) => {
+function App() {
+  $('.menu-form').addEventListener("submit", (e) => {
     e.preventDefault();
   })
 
 
-  document.querySelector('.input-field').addEventListener("keypress",() => {
+  $('.input-field').addEventListener("keypress",(e) => {
     if(e.key === "Enter") {
-      console.log(document.querySelector('.input-field'))
-    }
-  })
+      const espressoMenuName = $('.input-field').value;
+      const menuItemTemplate = (espressoMenuName) => {
+        return
+        `<li class="menu-list-item d-flex items-center py-2">
+    <span class="w-100 pl-2 menu-name">${espressoMenuName}</span>
+    <button
+    type="button"
+    class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button"
+  >
+    수정
+    </button>
+    <button
+    type="button"
+    class="bg-gray-50 text-gray-500 text-sm menu-remove-button"
+  >
+    삭제
+    </button>
+    </li>`;
+    };
+    $(".menu-list").insertAdjacentHTML("beforeend").menuItemTemplate(espressoMenuName)
+  }
+  });
 }
