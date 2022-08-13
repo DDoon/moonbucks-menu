@@ -46,7 +46,7 @@ function App() {
     </button>
     </li>`;
     };
-    $(".menu-list").insertAdjacentHTML("beforeend").menuItemTemplate(espressoMenuName)
+    $(".menu-list").insertAdjacentHTML("beforeEnd",menuItemTemplate(espressoMenuName))
   }
   });
 }
