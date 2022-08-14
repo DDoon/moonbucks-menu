@@ -1,7 +1,7 @@
 // step3 요구사항 분석
 
 // TODO 서버 요청 부분
-// - [ ] 웹 서버를 띄운다.
+// - [O] 웹 서버를 띄운다.
 // - [ ] 서버에 새로운 메뉴가 추가될 수 있도록 요청한다.
 // - [ ] 서버에 카테고리별 메뉴리스트를 불러온다.
 // - [ ] 서버에 메뉴가 수정 될 수 있도록 요청한다.
@@ -20,6 +20,10 @@
 
 import { $ } from "./utils/dom.js"
 import store from './store/index.js';
+
+const BASE_URL = "http://localhost:3000/api" // 재사용
+
+
 
 function App() {
   this.menu = {
@@ -66,7 +70,7 @@ function App() {
           .join('');
         $('.menu-list').innerHTML = template;
         updateMenuCount();
-      } 
+  } 
 
   const updateMenuCount= () => {
     const menuCount = this.menu[this.currentCategory].length;
@@ -79,11 +83,22 @@ function App() {
       return;
     }
     const menuName = $('.input-field').value;
-    this.menu[this.currentCategory].push({name: menuName});
+    fetch(`${BASE_URL}/category/${this.currentCategory}/menu`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({name : menuName})
+    }).then((response)=>{
+      return response.json();
+    }).then((data) => {
+      console.log(data);
+    })
+    // this.menu[this.currentCategory].push({name: menuName});
     store.setLocalStorage(this.menu);
     render()
     $('.input-filed').value = '';
-  };
+  }
 
   const updateMenuName = (e) => {
     const menuId = e.target.closest('li').dataset.menuId
