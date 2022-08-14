@@ -22,18 +22,8 @@
 // - [O] 품절 버튼을 추가한다.
 // - [O] 품절 버튼을 클릭하면 localStorage에 상태값이 저장된다.
 // - [O] 클릭이벤트에서 가장가까운 li태그의 class 속성 값에 sold-out을 추가한다.
-
-
-const $ = (selector) => document.querySelector(selector);
-
-const store = {
-  setLocalStorage(menu) {
-    localStorage.setItem('menu', JSON.stringify(menu));
-  },
-  getLocalStorage() {
-    return JSON.parse(localStorage.getItem('menu'));
-  },
-};
+import { $ } from "./utils/dom.js"
+import store from './store/index.js';
 
 function App() {
   this.menu = {
@@ -49,6 +39,7 @@ function App() {
       this.menu = store.getLocalStorage();
     }
     render()
+    this.initEventListeners();
   }
   const render = () => {
     const template = this.menu[this.currentCategory]
@@ -82,7 +73,7 @@ function App() {
       } 
 
   const updateMenuCount= () => {
-    const menuCount = $('.menu-list').querySelectorAll('li').length;
+    const menuCount = this.menu[this.currentCategory].length;
     $('.menu-count').innerHTML = `총 ${menuCount}개`;
   }
 
@@ -104,7 +95,7 @@ function App() {
     const updatedMenuName = prompt('메뉴명을 수정하세요', menuName.innerText);
     this.menu[this.currentCategory][menuId].name = updatedMenuName
     store.setLocalStorage(this.menu);
-    $menuName.innerText = updatedMenuName;
+    render()
   }
 
   const removeMenuName = (e) => {
@@ -112,8 +103,7 @@ function App() {
       const menuId = e.target.closest('li').dataset.menuId;
       this.menu[this.currentCategory].splice(menuId, 1);
       store.setLocalStorage(this.menu);
-      e.target.closest('li').remove();
-      updateMenuCount();
+      render();
     }
   }
 
@@ -125,6 +115,7 @@ function App() {
     render();
   }
 
+  const initEventListeners = () => {
   $('.menu-list-item').addEventListener('click', (e) => {
     if (e.target.classList.contains('menu-edit-button')) {
       updateMenuName(e)
@@ -162,7 +153,11 @@ function App() {
       render();
     }
   })
+  }
 }
 
 const app = new App();
 app.init();
+
+// 최대한 한파일에 객체가 하나만 있는게 좋다
+// 파일 분리 
