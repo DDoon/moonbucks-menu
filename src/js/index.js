@@ -31,12 +31,42 @@ const store = {
     localStorage.setItem('menu', JSON.stringify(menu));
   },
   getLocalStorage() {
-    localStorage.getItem('menu');
+    return JSON.parse(localStorage.getItem('menu'));
   },
 };
 
 function App() {
   this.menu = [];
+  this.init = () => {
+    if(store.getLocalStorage().length>1) {
+      this.menu = store.getLocalStorage();
+    }
+    render()
+  }
+  const render = () => {
+    const template = this.menu
+      .map((menuItem, index) => {
+        return;
+          `<li data-menu-id="${index}" class="menu-list-item d-flex items-center py-2">
+            <span class="w-100 pl-2 menu-name">${menuItem.name}</span>
+            <button
+            type="button"
+            class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button"
+            >
+            수정
+            </button>
+            <button
+            type="button"
+            class="bg-gray-50 text-gray-500 text-sm menu-remove-button"
+            >
+            삭제
+            </button>
+            </li>`;
+          })
+          .join('');
+        $('.menu-list').innerHTML = template;
+        updateMenuCount();
+      } 
 
   const updateMenuCount= () => {
     const menuCount = $('.menu-list').querySelectorAll('li').length;
@@ -51,29 +81,7 @@ function App() {
     const espressoMenuName = $('.input-field').value;
     this.menu.push({name: espressoMenuName});
     store.setLocalStorage(this.menu);
-    const template = this.menu
-      .map((menuItem, index) => {
-        return
-        `<li data-menu-id="${index}" class="menu-list-item d-flex items-center py-2">
-              <span class="w-100 pl-2 menu-name">${menuItem.name}</span>
-              <button
-              type="button"
-              class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button"
-            >
-              수정
-              </button>
-              <button
-              type="button"
-              class="bg-gray-50 text-gray-500 text-sm menu-remove-button"
-            >
-              삭제
-              </button>
-              </li>`;
-      })
-      .join('');
-
-    $('.menu-list').innerHTML = template
-    updateMenuCount();
+    render()
     $('.input-filed').value = '';
   };
 
@@ -118,4 +126,6 @@ function App() {
 
   $('.input-submit').addEventListener('click', addMenuName);
 }
-App();
+
+const app = new App();
+app.init();
