@@ -23,7 +23,12 @@ import store from './store/index.js';
 
 const BASE_URL = "http://localhost:3000/api" // 재사용
 
-
+const MenuApi = {
+  async getAllMenuByCategory(category) {
+    const response = await fetch(`${BASE_URL}/category/${currentCategory}/menu`)
+      return response.json();
+  }
+}
 
 function App() {
   this.menu = {
@@ -34,12 +39,10 @@ function App() {
     desert: [],
   };
   this.currentCategory = 'espresso'
-  this.init = () => {
-    if(store.getLocalStorage()) {
-      this.menu = store.getLocalStorage();
-    }
+  this.init = async() => {
+    this.menu[this.currentCategory] = await MenuApi.getAllMenuByCategory(this.currentCategory);
     render()
-    this.initEventListeners();
+    initEventListeners();
   }
   const render = () => {
     const template = this.menu[this.currentCategory]
@@ -93,15 +96,9 @@ function App() {
       return response.json();
     })
 
-    await fetch(`${BASE_URL}/category/${this.currentCategory}/menu`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        this.menu[this.currentCategory] = data;
-        render()
-        $('.input-filed').value = ''
-      });
+    this.menu[this.currentCategory] = await MenuApi.getAllMenuByCategory(this.currentCategory);
+    render();
+    $("#menu-name").value ="";
   }
 
   const updateMenuName = (e) => {
