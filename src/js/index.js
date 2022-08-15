@@ -4,9 +4,9 @@
 // - [O] 웹 서버를 띄운다.
 // - [O] 서버에 새로운 메뉴가 추가될 수 있도록 요청한다.
 // - [O] 서버에 카테고리별 메뉴리스트를 불러온다.
-// - [ ] 서버에 메뉴가 수정 될 수 있도록 요청한다.
-// - [ ] 서버에 메뉴가 품절상태가 토글될 수 있도록 요청한다.
-// - [ ] 서버에 메뉴가 삭제 될 수 있도록 요청한다.
+// - [O] 서버에 메뉴가 수정 될 수 있도록 요청한다.
+// - [O] 서버에 메뉴가 품절상태가 토글될 수 있도록 요청한다.
+// - [O] 서버에 메뉴가 삭제 될 수 있도록 요청한다.
 
 
 // TODO 리팩터링 부분
@@ -59,6 +59,16 @@ const MenuApi = {
     });
     if(!response.ok) {
       console.error("에러가 발생했습니다.")
+    }
+  },
+  async deleteMenu(category, menuId) {
+    const response = await fetch(`${BASE_URL}/category/${category}/menu/${menuId}/`, 
+      {
+        method: "DELETE",
+      }
+    )
+    if(!response.ok) {
+      console.error("에러가 발생햇습니다.");
     }
   }
 };
@@ -136,11 +146,13 @@ function App() {
     render()
   }
 
-  const removeMenuName = (e) => {
+  const removeMenuName = async(e) => {
     if (confirm('정말 삭제하시겠습니까?')) {
       const menuId = e.target.closest('li').dataset.menuId;
-      this.menu[this.currentCategory].splice(menuId, 1);
-      store.setLocalStorage(this.menu);
+      await MenuApi.deleteMenu(this.currentCategory, menuId);
+      this.menu[this.currentCategory] = await MenuApi.getAllMenuByCategory(
+        this.currentCategory
+      );
       render();
     }
   }
