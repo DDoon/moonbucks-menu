@@ -3,7 +3,7 @@
 // TODO 서버 요청 부분
 // - [O] 웹 서버를 띄운다.
 // - [O] 서버에 새로운 메뉴가 추가될 수 있도록 요청한다.
-// - [ ] 서버에 카테고리별 메뉴리스트를 불러온다.
+// - [O] 서버에 카테고리별 메뉴리스트를 불러온다.
 // - [ ] 서버에 메뉴가 수정 될 수 있도록 요청한다.
 // - [ ] 서버에 메뉴가 품절상태가 토글될 수 있도록 요청한다.
 // - [ ] 서버에 메뉴가 삭제 될 수 있도록 요청한다.
@@ -25,10 +25,22 @@ const BASE_URL = "http://localhost:3000/api" // 재사용
 
 const MenuApi = {
   async getAllMenuByCategory(category) {
-    const response = await fetch(`${BASE_URL}/category/${currentCategory}/menu`)
-      return response.json();
-  }
-}
+    const response = await fetch(`${BASE_URL}/category/${category}/menu`);
+    return response.json();
+  },
+  async createMenu(category,name) {
+    const response = await fetch(`${BASE_URL}/category/${category}/menu`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name: name }),
+    });
+    if (!response.ok) {
+      console.error('에러가 발생했습니다.');
+    }
+  },
+};
 
 function App() {
   this.menu = {
@@ -86,16 +98,7 @@ function App() {
       return;
     }
     const menuName = $('.input-field').value;
-    await fetch(`${BASE_URL}/category/${this.currentCategory}/menu`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({name : menuName})
-    }).then((response)=>{
-      return response.json();
-    })
-
+    await MenuApi.createMenu(this.currentCategory, menuName);
     this.menu[this.currentCategory] = await MenuApi.getAllMenuByCategory(this.currentCategory);
     render();
     $("#menu-name").value ="";
@@ -156,12 +159,13 @@ function App() {
 
   $('.input-submit').addEventListener('click', addMenuName);
 
-  $("nav").addEventListener("click", (e) => {
-    const isCategorryButton =e.target.classList.contains('cafe-category-name')
+  $("nav").addEventListener("click", async(e) => {
+    const isCategorryButton = e.target.classList.contains('cafe-category-name')
     if(isCategorryButton){
       const categoryName = e.target.dataset.categoryName
       this.currentCategory = categoryName
       $('#category-title').innerText = `${e.target.innerText} 메뉴 관리`
+      this.menu[this.currentCategory] = await MenuApi.getAllMenuByCategory(this.currentCategory)
       render();
     }
   })
