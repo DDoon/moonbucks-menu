@@ -10,8 +10,8 @@
 
 
 // TODO 리팩터링 부분
-// - [ ] localStorage에 저장하는 로직은 지운다.
-// - [ ] fetch 비동기 api를 사용하는 부분을 async await를 사용하여 구현한다.
+// - [O] localStorage에 저장하는 로직은 지운다.
+// - [O] fetch 비동기 api를 사용하는 부분을 async await를 사용하여 구현한다.
 
 // TODO 사용자 경험
 // - [ ] API 통신이 실패하는 경우에 대해 사용자가 알 수 있게 alert으로 예외처리를 진행한다.
@@ -80,6 +80,14 @@ function App() {
       alert('값을 입력해주세요.');
       return;
     }
+    
+    const duplicatedItem = this.menu[this.currentCategory].find(menuItem => menuItem.name === $('#menu-name').value)
+    if(duplicatedItem) {
+      alert('이미 등록된 메뉴입니다. 다시 입력해주세요.');
+      $("#menu-name").value ="";
+      return;
+    }
+
     const menuName = $('.input-field').value;
     await MenuApi.createMenu(this.currentCategory, menuName);
     render();
